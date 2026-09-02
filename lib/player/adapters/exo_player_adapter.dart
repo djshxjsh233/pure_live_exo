@@ -7,6 +7,7 @@ import '../models/player_exception.dart';
 import '../models/player_error_type.dart';
 import '../interface/unified_player_interface.dart';
 import 'package:pure_live/common/index.dart';
+// exo-dev 自动构建触发标记
 
 /// ExoPlayer 内核适配器（官方 video_player 插件，Android 底层为 Google ExoPlayer/Media3）
 /// - 原生支持 HLS/DASH/MP4
