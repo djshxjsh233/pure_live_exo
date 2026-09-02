@@ -14,6 +14,19 @@ import 'package:pure_live/common/global/platform/desktop_manager.dart';
 void main(List<String> args) async {
   await AppInitializer().initialize(args);
 
+  // 播放器预热：进入首页前完成内核初始化（media_kit 首次加载 libmpv 需1~3秒）。
+  // 若拖到首次点进直播间才初始化，会出现满屏灰色覆盖等待——提前 await 消除
+  try {
+    final String savedKey = SettingsService.to.player.videoPlayerKey.v;
+    final String validKey = PlayerConsts.engines.containsKey(savedKey) ? savedKey : PlayerConsts.defaultKey;
+    final PlayerEngine engine = PlayerConsts.engines[validKey]!;
+    await GlobalPlayerService.instance.initialize(
+      defaultEngine: PlatformUtils.isDesktop ? PlayerEngine.mediaKit : engine,
+    );
+  } catch (e) {
+    developer.log('播放器预热失败: $e');
+  }
+
   runApp(
     EasyLocalization(
       supportedLocales: const [Locale('en'), Locale('zh')],
@@ -39,9 +52,10 @@ class _MyAppState extends State<MyApp> with DesktopWindowMixin {
     if (PlatformUtils.isDesktop) {
       DesktopManager.initializeListeners(this);
     }
-    initGlopalPlayer();
+    // 播放器已在 main() 中 runApp 前预热完成，无需此处再初始化
   }
 
+  @Deprecated('播放器预热已移至 main() 启动阶段')
   Future<void> initGlopalPlayer() async {
     final String savedKey = SettingsService.to.player.videoPlayerKey.v;
     final String validKey = PlayerConsts.engines.containsKey(savedKey) ? savedKey : PlayerConsts.defaultKey;
