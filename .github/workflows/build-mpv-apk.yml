@@ -1,4 +1,5 @@
-name: Build PureLive Exo APK
+# push 触发时标题显示本次提交信息；手动dispatch时显示分支名
+name: ${{ github.event_name == 'push' && github.event.head_commit.message || format('Build {0}', github.ref_name) }}
 
 on:
   workflow_dispatch:
