@@ -419,6 +419,20 @@ class LivePlayController extends StateController with GetSingleTickerProviderSta
     } else if (currentSite.id == Sites.huyaSite) {
       final ua = await HuyaSite().getHuYaUA();
       headers = {"user-agent": ua, "origin": "https://www.huya.com"};
+    } else if (currentSite.id == Sites.douyinSite) {
+      // ExoPlayer 直连抖音 HLS 必须带完整请求头（UA/Referer/Cookie），否则 CDN 拒绝 → 回退MPV
+      final dyHeaders = await DouyinSite().getRequestHeaders();
+      headers = <String, String>{
+        "user-agent": DouyinSite.kDefaultUserAgent,
+        "referer": "https://live.douyin.com/",
+        "accept": "*/*",
+        "accept-language": "zh-CN,zh;q=0.9",
+        "origin": "https://live.douyin.com",
+      };
+      final dyCookie = dyHeaders["cookie"]?.toString();
+      if (dyCookie != null && dyCookie.isNotEmpty) {
+        headers["cookie"] = dyCookie;
+      }
     }
 
     GlobalPlayerState().setCurrentRoom(room.roomId!);
@@ -473,6 +487,11 @@ class LivePlayController extends StateController with GetSingleTickerProviderSta
       isAudioOnly: isCurrentRoomAudioOnly.value,
       onAudioOnlyChanged: changeCurrentRoomAudioOnly,
     );
+
+    // 调试用：显示当前播放内核（ExoPlayer / MPV），便于确认引擎生效
+    final engine = GlobalPlayerService.instance.playerManager.currentEngine;
+    CoreLog.i("▶ 播放内核: ${engine.name}");
+    ToastUtil.show(engine == PlayerEngine.exo ? "ExoPlayer内核" : "MPV内核");
 
     success.value = true;
   }
