@@ -74,6 +74,8 @@ class ExoPlayerAdapter implements UnifiedPlayer {
       _stateSubject.add(PlayerState.ready);
       _startPolling();
     } catch (e) {
+      // 诊断期: 展示失败原因以便定位
+      try { ToastUtil.show('Exo初始化失败: $e'); } catch (_) {}
       _errorSubject.add(PlayerException(
         message: 'Exo初始化失败: $e',
         type: PlayerErrorType.initialization,
@@ -209,6 +211,7 @@ class ExoPlayerAdapter implements UnifiedPlayer {
     if (c == null) return;
     final v = c.value;
     if (v.hasError) {
+      try { ToastUtil.show('Exo播放错误: ${v.errorDescription ?? 'unknown'}'); } catch (_) {}
       _errorSubject.add(PlayerException(
         message: 'Exo播放错误: ${v.errorDescription ?? 'unknown'}',
         type: PlayerErrorType.source,
