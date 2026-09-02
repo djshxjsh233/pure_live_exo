@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:pure_live/player/models/player_engine.dart';
 
 class PlayerConsts {
-  static const String defaultKey = 'mpv';
+  static const String defaultKey = 'exo';
 
   static const Map<String, PlayerEngine> engines = {
+    'exo': PlayerEngine.exo,
     'mpv': PlayerEngine.mediaKit,
   };
 
-  static const Map<String, String> names = {'mpv': 'player_mpv'};
+  static const Map<String, String> names = {
+    'exo': 'player_exo',
+    'mpv': 'player_mpv',
+  };
 
   static String getKeyByI18nKey(String i18nKey) {
     return names.entries.firstWhere((e) => e.value == i18nKey, orElse: () => names.entries.first).key;
