@@ -1,4 +1,4 @@
-name: Build MPV-only Android APK
+name: Build PureLive Exo APK
 
 on:
   workflow_dispatch:
@@ -52,6 +52,7 @@ jobs:
 
       - name: Verify artifact
         run: |
+          echo "=== 构建版本: $(git rev-parse --short HEAD) (${{ github.ref_name }}) ==="
           ls -la build/app/outputs/flutter-apk/
           ls -la build/app/outputs/flutter-apk/*.apk
 
