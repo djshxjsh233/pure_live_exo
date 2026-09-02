@@ -30,6 +30,15 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Free disk space (runner自带缓存清理, 防No space left)
+        run: |
+          df -h /
+          rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/powershell /usr/local/graalvm /usr/lib/google-cloud-sdk 2>/dev/null || true
+          rm -rf /usr/local/lib/android/sdk/cmdline-tools 2>/dev/null || true
+          sudo rm -rf /home/runner/.gradle/caches 2>/dev/null || true
+          docker image prune -af 2>/dev/null || true
+          df -h /
+
       - name: Enable Flutter Linux desktop (ensure toolchain)
         run: |
           flutter config --no-analytics
