@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+      - exo-dev
     paths:
       - 'lib/**'
       - 'pubspec.yaml'
