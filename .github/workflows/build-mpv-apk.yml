@@ -1,4 +1,4 @@
-name: Build PureLive Exo APK (${{ github.ref_name }})
+name: Build PureLive Exo APK
 
 on:
   workflow_dispatch:
