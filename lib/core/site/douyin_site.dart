@@ -826,10 +826,11 @@ class DouyinSite implements LiveSite {
               if (entry is Map) {
                 final main = entry["main"];
                 if (main is Map) {
-                  final flvUrl = main["flv"]?.toString();
-                  if (flvUrl != null && flvUrl.isNotEmpty) urls.add(flvUrl);
+                  // HLS 优先（ExoPlayer 原生支持且为单音轨，规避 FLV 双音轨声音忽大忽小问题）
                   final hlsUrl = main["hls"]?.toString();
                   if (hlsUrl != null && hlsUrl.isNotEmpty) urls.add(hlsUrl);
+                  final flvUrl = main["flv"]?.toString();
+                  if (flvUrl != null && flvUrl.isNotEmpty) urls.add(flvUrl);
                 }
               }
               if (urls.isNotEmpty) {
@@ -847,13 +848,13 @@ class DouyinSite implements LiveSite {
             for (var quality in qulityList) {
               int level = (quality["level"] as num?)?.toInt() ?? 0;
               List<String> urls = [];
-              var flvIndex = flvList.length - level;
-              if (flvIndex >= 0 && flvIndex < flvList.length) {
-                urls.add(flvList[flvIndex]);
-              }
               var hlsIndex = hlsList.length - level;
               if (hlsIndex >= 0 && hlsIndex < hlsList.length) {
                 urls.add(hlsList[hlsIndex]);
+              }
+              var flvIndex = flvList.length - level;
+              if (flvIndex >= 0 && flvIndex < flvList.length) {
+                urls.add(flvList[flvIndex]);
               }
               if (urls.isNotEmpty) {
                 qualities.add(LivePlayQuality(
@@ -876,10 +877,11 @@ class DouyinSite implements LiveSite {
         const levelMap = {'FULL_HD1': 4, 'HD1': 3, 'SD1': 2, 'SD2': 1};
         flvMap.forEach((k, v) {
           final urls = <String>[];
-          final flv = v?.toString();
-          if (flv != null && flv.isNotEmpty) urls.add(flv);
+          // HLS 优先
           final hls = hlsMap[k]?.toString();
           if (hls != null && hls.isNotEmpty) urls.add(hls);
+          final flv = v?.toString();
+          if (flv != null && flv.isNotEmpty) urls.add(flv);
           if (urls.isNotEmpty) {
             final key = k?.toString() ?? '';
             final level = levelMap[key] ?? 0;

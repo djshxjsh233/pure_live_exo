@@ -1,1 +1,1 @@
-enum PlayerEngine { mediaKit }
+enum PlayerEngine { exo, mediaKit }

@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'core/player_pool.dart';
 import 'core/player_manager.dart';
 import 'models/player_engine.dart';
+import 'adapters/exo_player_adapter.dart';
 import 'adapters/media_kit_adapter.dart';
 import 'core/line_fallback_manager.dart';
 import 'package:media_kit/media_kit.dart';
@@ -20,7 +21,7 @@ class GlobalPlayerService {
 
   bool get initialized => _initialized;
 
-  Future<void> initialize({PlayerEngine defaultEngine = PlayerEngine.mediaKit}) async {
+  Future<void> initialize({PlayerEngine defaultEngine = PlayerEngine.exo}) async {
     if (_initialized) return;
 
     MediaKit.ensureInitialized();
@@ -29,6 +30,8 @@ class GlobalPlayerService {
     final playerPool = PlayerPool(
       factory: (engine) async {
         switch (engine) {
+          case PlayerEngine.exo:
+            return ExoPlayerAdapter();
           case PlayerEngine.mediaKit:
             return MediaKitAdapter();
         }
@@ -39,8 +42,8 @@ class GlobalPlayerService {
     playerManager = PlayerManager(
       playerPool: playerPool,
       fallbackManager: EngineFallbackManager(
-        defaultEngine: PlayerEngine.mediaKit,
-        supportedEngines: [PlayerEngine.mediaKit],
+        defaultEngine: PlayerEngine.exo,
+        supportedEngines: [PlayerEngine.exo, PlayerEngine.mediaKit],
       ),
       preloadManager: PreloadPlayerManager(),
       lineManager: LineFallbackManager(),

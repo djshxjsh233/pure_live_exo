@@ -56,6 +56,7 @@ dependencies:
   flame_barrage:
     path: vendor/flame_barrage
   # -------------------------- 音视频播放 --------------------------
+  video_player: ^2.14.0 # ExoPlayer内核(Android==ExoPlayer/Media3), HLS首选
   media_kit:
     git:
       url: https://github.com/Predidit/media-kit.git
